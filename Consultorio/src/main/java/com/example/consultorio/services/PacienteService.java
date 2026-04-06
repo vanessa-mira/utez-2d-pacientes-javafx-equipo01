@@ -10,45 +10,39 @@ import java.util.stream.Collectors;
 public class PacienteService {
     private PacienteRepository repo = new PacienteRepository();
 
-    public List<Paciente> getAll() throws IOException {
+    public List<Paciente> loadData() throws IOException {
         List<String> lines = repo.readAllLines();
-        List<Paciente> lista = new ArrayList<>();
+        List<Paciente> result = new ArrayList<>();
         for (String line : lines) {
-            if (line.isBlank()) continue;
-            String[] p = line.split(",");
-            lista.add(new Paciente(p[0], p[1], Integer.parseInt(p[2]), p[3], p[4], Boolean.parseBoolean(p[5])));
+            if (line == null || line.isBlank()) continue;
+            String[] p = line.split(",", -1);
+            result.add(new Paciente(p[0], p[1], Integer.parseInt(p[2]), p[3], p[4], p[5]));
         }
-        return lista;
+        return result;
     }
 
-    public void save(Paciente p, boolean isEdit) throws IOException {
-        List<Paciente> lista = getAll();
+    public void addPaciente(String curp, String nom, int edad, String tel, String al) throws IOException {
+        if (nom.length() < 5) throw new IllegalArgumentException("Nombre muy corto");
+        if (edad < 0 || edad > 120) throw new IllegalArgumentException("Edad inválida");
+        if (!tel.matches("\\d{10}")) throw new IllegalArgumentException("Teléfono debe ser de 10 dígitos");
 
-        if (!isEdit && lista.stream().anyMatch(pac -> pac.getCurp().equalsIgnoreCase(p.getCurp()))) {
-            throw new IllegalArgumentException("La CURP ya existe.");
+        // Evitar duplicados por CURP
+        for (Paciente p : loadData()) {
+            if (p.getCurp().equalsIgnoreCase(curp)) throw new IllegalArgumentException("CURP ya registrado");
         }
 
-        if (isEdit) {
-            lista.removeIf(pac -> pac.getCurp().equalsIgnoreCase(p.getCurp()));
-        }
-
-        lista.add(p);
-        updateFile(lista);
+        Paciente nuevo = new Paciente(curp, nom, edad, tel, al, "ACTIVO");
+        repo.appendNewLine(nuevo.toCSV());
     }
 
-    public void toggleStatus(String curp) throws IOException {
-        List<Paciente> lista = getAll();
+    public void toggleEstatus(Paciente paciente) throws IOException {
+        List<Paciente> lista = loadData();
         for (Paciente p : lista) {
-            if (p.getCurp().equalsIgnoreCase(curp)) {
-                p.setActivo(!p.isActivo());
-                break;
+            if (p.getCurp().equals(paciente.getCurp())) {
+                p.setEstatus(p.getEstatus().equals("ACTIVO") ? "INACTIVO" : "ACTIVO");
             }
         }
-        updateFile(lista);
-    }
-
-    private void updateFile(List<Paciente> lista) throws IOException {
-        List<String> lines = lista.stream().map(Paciente::toString).collect(Collectors.toList());
-        repo.saveAllLines(lines);
+        List<String> lines = lista.stream().map(Paciente::toCSV).collect(Collectors.toList());
+        repo.writeAllLines(lines);
     }
 }
