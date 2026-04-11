@@ -56,6 +56,10 @@ public class Paciente {
 
     @Override
     public String toString() {
-        return curp + "," + nombre + "," + edad + "," + tel + "," + alergias + "," + estatus;
+
+    }
+
+    public String toCSV() {
+
     }
 }
