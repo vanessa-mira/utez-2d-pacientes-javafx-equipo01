@@ -9,5 +9,6 @@
         <module name="Consultorio" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel target="21" />
   </component>
 </project>
