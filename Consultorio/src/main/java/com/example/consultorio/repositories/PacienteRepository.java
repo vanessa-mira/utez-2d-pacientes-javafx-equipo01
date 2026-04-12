@@ -1,6 +1,5 @@
 package com.example.consultorio.repositories;
 
-
 import com.example.consultorio.models.Paciente;
 import java.io.*;
 import java.util.*;
@@ -10,7 +9,10 @@ public class PacienteRepository {
 
     public List<Paciente> leer() {
         List<Paciente> lista = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+        File file = new File(archivo);
+        if (!file.exists()) return lista;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String linea;
             while ((linea = br.readLine()) != null) {
                 String[] d = linea.split(",");
@@ -19,7 +21,7 @@ public class PacienteRepository {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Archivo nuevo o vacio");
+            System.out.println("Error al leer: " + e.getMessage());
         }
         return lista;
     }
