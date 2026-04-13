@@ -7,59 +7,35 @@ import javafx.collections.ObservableList;
 import java.util.List;
 
 public class PacienteService {
-    private PacienteRepository repo = new PacienteRepository();
-    private ObservableList<Paciente> listaPacientes = FXCollections.observableArrayList();
+    private PacienteRepository repo = new PacienteRepository(); // conecta con el repositorio de archivos
+    private ObservableList<Paciente> listaPacientes = FXCollections.observableArrayList(); // lista especial para la tabla
 
     public PacienteService() {
-        cargarDatos();
+        cargarDatos(); // carga la informacion del archivo en cuanto se crea el servicio
     }
 
-    // Carga el archivo
     private void cargarDatos() {
-        List<Paciente> desdeArchivo = repo.leer();
-        listaPacientes.setAll(desdeArchivo);
+        List<Paciente> desdeArchivo = repo.leer(); // pide los pacientes al repositorio
+        listaPacientes.setAll(desdeArchivo); // mete los pacientes en la lista de la interfaz
     }
 
-    // Retorna la lista  para la Tabla
     public ObservableList<Paciente> getLista() {
-        return listaPacientes;
+        return listaPacientes; // entrega la lista para que el controlador la use
     }
 
-    // Guarda los cambios en el archivo
     public void guardar() {
-        repo.guardar(listaPacientes);
-    }
-
-    // Agrega nuevo paciente
-    public void agregar(Paciente p) {
-        listaPacientes.add(p);
-        guardar();
-    }
-    // Actualizar un paciente existente (usando CURP como ID)
-    public void actualizar(Paciente pEditado) {
-        for (int i = 0; i < listaPacientes.size(); i++) {
-            if (listaPacientes.get(i).getCurp().equals(pEditado.getCurp())) {
-                listaPacientes.set(i, pEditado);
-                break;
-            }
-        }
-        guardar();
+        repo.guardar(listaPacientes); // manda la lista actual a guardarse en el archivo fisico
     }
 
     public void eliminar(Paciente p) {
-        listaPacientes.remove(p);
-        guardar();
+        listaPacientes.remove(p); // borra al paciente de la lista de memoria
+        guardar(); // guarda el cambio en el archivo para que desaparezca permanente
     }
 
     public void cambiarEstatus(Paciente p) {
         if (p != null) {
-            p.setActivo(!p.isActivo());
-            guardar();
+            p.setActivo(!p.isActivo()); // si era true lo cambia a false y al reves
+            guardar(); // guarda el cambio de estado en el archivo
         }
     }
-
-    public boolean existeCurp(String curp) {
-        return listaPacientes.stream().anyMatch(p -> p.getCurp().equalsIgnoreCase(curp));
-    }
 }
-
