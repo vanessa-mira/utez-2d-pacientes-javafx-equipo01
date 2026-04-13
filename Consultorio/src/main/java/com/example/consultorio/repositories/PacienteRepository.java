@@ -26,4 +26,16 @@ public class PacienteRepository {
         return lista;
     }
 
+    public void guardar(List<Paciente> lista) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo))) {
+            for (Paciente p : lista) {
+                bw.write(p.getCurp() + "," + p.getNombre() + "," + p.getEdad() + "," +
+                        p.getTelefono() + "," + p.getAlergias() + "," + p.getEstatus());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
