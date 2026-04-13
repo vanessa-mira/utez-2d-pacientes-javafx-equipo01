@@ -1,33 +1,29 @@
 package com.example.consultorio.repositories;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.util.List;
+import com.example.consultorio.models.Paciente;
+import java.io.*;
+import java.util.*;
 
 public class PacienteRepository {
-    private final Path filePath = Paths.get("data", "pacientes.csv");
+    private final String archivo = "pacientes.txt";
 
-    private void ensureFileExist() throws IOException {
-        Path dataDir = Paths.get("data");
-        if (Files.notExists(dataDir)) Files.createDirectories(dataDir);
-        if (Files.notExists(filePath)) Files.createFile(filePath);
+    public List<Paciente> leer() {
+        List<Paciente> lista = new ArrayList<>();
+        File file = new File(archivo);
+        if (!file.exists()) return lista;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] d = linea.split(",");
+                if (d.length == 6) {
+                    lista.add(new Paciente(d[0], d[1], Integer.parseInt(d[2]), d[3], d[4], d[5]));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al leer: " + e.getMessage());
+        }
+        return lista;
     }
 
-    public List<String> readAllLines() throws IOException {
-        ensureFileExist();
-        return Files.readAllLines(filePath, StandardCharsets.UTF_8);
-    }
-
-    public void appendNewLine(String line) throws IOException {
-        ensureFileExist();
-        Files.writeString(filePath, line + System.lineSeparator(),
-                StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-    }
-
-    public void writeAllLines(List<String> lines) throws IOException {
-        ensureFileExist();
-        Files.write(filePath, lines, StandardCharsets.UTF_8,
-                StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
-    }
 }

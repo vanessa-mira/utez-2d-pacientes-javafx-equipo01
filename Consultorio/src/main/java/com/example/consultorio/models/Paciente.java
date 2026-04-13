@@ -4,25 +4,23 @@ public class Paciente {
     private String curp;
     private String nombre;
     private int edad;
-    private String tel;
+    private String telefono;
     private String alergias;
-    private String estatus; // ACTIVO o INACTIVO
+    private boolean activo;
 
-    public Paciente(String curp, String nombre, int edad, String tel, String alergias, String estatus) {
+    public Paciente(String curp, String nombre, int edad, String telefono, String alergias, String estatus) {
         this.curp = curp;
         this.nombre = nombre;
         this.edad = edad;
-        this.tel = tel;
+        this.telefono = telefono;
         this.alergias = alergias;
-        this.estatus = estatus;
+        this.activo = estatus.equalsIgnoreCase("Activo");
     }
 
-    // Getters y Setters (Necesarios para el TableView)
+    // Getters y Setters
     public String getCurp() {
         return curp;
     }
-    public void setCurp(String curp) {
-        this.curp = curp; }
     public String getNombre() {
         return nombre;
     }
@@ -35,11 +33,11 @@ public class Paciente {
     public void setEdad(int edad) {
         this.edad = edad;
     }
-    public String getTel() {
-        return tel;
+    public String getTelefono() {
+        return telefono;
     }
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
     public String getAlergias() {
         return alergias;
@@ -47,15 +45,16 @@ public class Paciente {
     public void setAlergias(String alergias) {
         this.alergias = alergias;
     }
-    public String getEstatus() {
-        return estatus;
+
+    public boolean isActivo() {
+        return activo;
     }
-    public void setEstatus(String estatus) {
-        this.estatus = estatus;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
-    @Override
-    public String toString() {
-        return curp + "," + nombre + "," + edad + "," + tel + "," + alergias + "," + estatus;
+    public String getEstatus() {
+
+        return activo ? "Activo" : "Inactivo";
     }
 }
