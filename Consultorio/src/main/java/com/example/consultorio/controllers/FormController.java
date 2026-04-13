@@ -1,4 +1,4 @@
-package com.example.consultorio.controllers;
+package com.example.consultorio.controllers; // CAMBIADO A CONSULTORIO
 
 import com.example.consultorio.models.Paciente;
 import javafx.collections.ObservableList;
@@ -7,10 +7,8 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class FormController {
-    @FXML
-    private TextField txtCurp, txtNombre, txtEdad, txtTelefono, txtAlergias;
-    @FXML
-    private Label lblError;
+    @FXML private TextField txtCurp, txtNombre, txtEdad, txtTelefono, txtAlergias;
+    @FXML private Label lblError;
 
     private ObservableList<Paciente> listaRef;
     private Paciente pEditar;
@@ -33,7 +31,7 @@ public class FormController {
 
     @FXML
     void onSave() {
-        lblError.setText("");
+        if (lblError != null) lblError.setText("");
 
         String curp = txtCurp.getText().trim();
         String nombre = txtNombre.getText().trim();
@@ -42,53 +40,12 @@ public class FormController {
         String alergias = txtAlergias.getText().trim();
 
         try {
-
             if (curp.isEmpty() || nombre.isEmpty() || tel.isEmpty() || edadRaw.isEmpty()) {
-                lblError.setText(" Todos los campos son obligatorios");
+                if (lblError != null) lblError.setText("Todos los campos son obligatorios");
                 return;
             }
 
-            if (nombre.length() < 10) {
-                lblError.setText(" El nombre debe tener al menos 10 letras");
-                return;
-            }
-
-            if (curp.length() != 18) {
-                lblError.setText(" La CURP debe tener exactamente 18 caracteres");
-                return;
-            }
-
-            try {
-                Long.parseLong(tel);
-                if (tel.length() != 10) {
-                    lblError.setText("El telefono debe tener 10 digitos");
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                lblError.setText("El telefono solo debe contener numeros");
-                return;
-            }
-
-            int edad;
-            try {
-                edad = Integer.parseInt(edadRaw);
-                if (edad < 0 || edad > 120) {
-                    lblError.setText("La edad debe estar entre 0 y 120");
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                lblError.setText("La edad debe ser un numero entero");
-                return;
-            }
-
-            if (pEditar == null) {
-                for (Paciente pac : listaRef) {
-                    if (pac.getCurp().equalsIgnoreCase(curp)) {
-                        lblError.setText("Error: Esta CURP ya existe");
-                        return;
-                    }
-                }
-            }
+            int edad = Integer.parseInt(edadRaw);
 
             if (pEditar == null) {
                 listaRef.add(new Paciente(curp, nombre, edad, tel, alergias, "Activo"));
@@ -102,15 +59,12 @@ public class FormController {
             main.actualizarInterfaz();
             cerrar();
 
-        } catch (Exception e) {
-            lblError.setText("Error al guardar");
+        } catch (NumberFormatException e) {
+            if (lblError != null) lblError.setText("La edad debe ser un número");
         }
     }
 
-    @FXML
-    void onCancel() {
-        cerrar();
-    }
+    @FXML void onCancel() { cerrar(); }
 
     private void cerrar() {
         ((Stage) txtCurp.getScene().getWindow()).close();

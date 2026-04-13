@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 
 public class PacienteRepository {
-    private final String archivo = "pacientes.txt";
+    private final String archivo = "data/pacientes.csv";
 
     public List<Paciente> leer() {
         List<Paciente> lista = new ArrayList<>();
@@ -27,6 +27,13 @@ public class PacienteRepository {
     }
 
     public void guardar(List<Paciente> lista) {
+        // 1. Crear el objeto File para la carpeta
+        File directorio = new File("data");
+
+        // 2. Si la carpeta no existe, la creamos
+        if (!directorio.exists()) {
+            directorio.mkdir();
+        }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo))) {
             for (Paciente p : lista) {
                 bw.write(p.getCurp() + "," + p.getNombre() + "," + p.getEdad() + "," +

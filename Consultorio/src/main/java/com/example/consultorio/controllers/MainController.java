@@ -1,8 +1,8 @@
-package com.example.consultorio.controllers;
-
+package com.example.consultorio.controllers; // CAMBIADO A CONSULTORIO
 
 import com.example.consultorio.models.Paciente;
 import com.example.consultorio.services.PacienteService;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 public class MainController {
@@ -22,7 +21,7 @@ public class MainController {
     @FXML
     private TableColumn<Paciente, String> colNombre;
     @FXML
-    private TableColumn<Paciente, String> colEstatus; // Nota: Paciente debe tener getEstatus() o ser String
+    private TableColumn<Paciente, String> colEstatus;
     @FXML
     private Label lblTotal, lblActivos, lblInactivos;
 
@@ -30,19 +29,15 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        // Configuración de columnas
         colCurp.setCellValueFactory(new PropertyValueFactory<>("curp"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colEstatus.setCellValueFactory(new PropertyValueFactory<>("estatus"));
-
-        // Cargar datos
         tblPacientes.setItems(service.getLista());
         actualizarInterfaz();
     }
 
     public void actualizarInterfaz() {
         if (service.getLista() == null) return;
-
         long total = service.getLista().size();
         long activos = service.getLista().stream().filter(Paciente::isActivo).count();
         long inactivos = total - activos;
@@ -54,6 +49,7 @@ public class MainController {
         service.guardar();
         tblPacientes.refresh();
     }
+
     @FXML
     void onOpenForm() {
         abrirVentana(null);
@@ -62,11 +58,8 @@ public class MainController {
     @FXML
     void onEdit() {
         Paciente seleccionado = tblPacientes.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            abrirVentana(seleccionado);
-        } else {
-            mostrarAlerta("Atención", "Selecciona un paciente para editar", Alert.AlertType.WARNING);
-        }
+        if (seleccionado != null) abrirVentana(seleccionado);
+        else mostrarAlerta("Atención", "Selecciona un paciente", Alert.AlertType.WARNING);
     }
 
     @FXML
@@ -82,7 +75,6 @@ public class MainController {
     void onDelete() {
         Paciente seleccionado = tblPacientes.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
-            // Opcional: Agregar una confirmación antes de borrar
             service.eliminar(seleccionado);
             actualizarInterfaz();
         }
@@ -90,27 +82,22 @@ public class MainController {
 
     private void abrirVentana(Paciente p) {
         try {
-            // Corregido: Uso de Parent y validación de ruta
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/form-view.fxml"));
+            // RUTA ACTUALIZADA A CONSULTORIO
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/consultorio/views/form-view.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
             stage.setTitle(p == null ? "Nuevo Paciente" : "Editar Paciente");
-
-            // Hacer la ventana modal (bloquea la principal hasta cerrar esta)
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
 
             FormController controller = loader.getController();
             controller.preparar(service.getLista(), p, this);
 
-            stage.showAndWait(); // Esperar a que se cierre para continuar si fuera necesario
-        } catch (IOException e) {
-            e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo cargar el archivo FXML. Verifica la ruta.", Alert.AlertType.ERROR);
+            stage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "Ocurrió un error inesperado.", Alert.AlertType.ERROR);
+            mostrarAlerta("Error", "No se pudo abrir el formulario.", Alert.AlertType.ERROR);
         }
     }
 
