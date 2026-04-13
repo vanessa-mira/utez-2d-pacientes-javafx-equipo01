@@ -54,4 +54,71 @@ public class MainController {
         service.guardar();
         tblPacientes.refresh();
     }
+    @FXML
+    void onOpenForm() {
+        abrirVentana(null);
+    }
+
+    @FXML
+    void onEdit() {
+        Paciente seleccionado = tblPacientes.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            abrirVentana(seleccionado);
+        } else {
+            mostrarAlerta("Atención", "Selecciona un paciente para editar", Alert.AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    void onToggleStatus() {
+        Paciente seleccionado = tblPacientes.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            service.cambiarEstatus(seleccionado);
+            actualizarInterfaz();
+        }
+    }
+
+    @FXML
+    void onDelete() {
+        Paciente seleccionado = tblPacientes.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            // Opcional: Agregar una confirmación antes de borrar
+            service.eliminar(seleccionado);
+            actualizarInterfaz();
+        }
+    }
+
+    private void abrirVentana(Paciente p) {
+        try {
+            // Corregido: Uso de Parent y validación de ruta
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/form-view.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle(p == null ? "Nuevo Paciente" : "Editar Paciente");
+
+            // Hacer la ventana modal (bloquea la principal hasta cerrar esta)
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+
+            FormController controller = loader.getController();
+            controller.preparar(service.getLista(), p, this);
+
+            stage.showAndWait(); // Esperar a que se cierre para continuar si fuera necesario
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo cargar el archivo FXML. Verifica la ruta.", Alert.AlertType.ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "Ocurrió un error inesperado.", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
 }
