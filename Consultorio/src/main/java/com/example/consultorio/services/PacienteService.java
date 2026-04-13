@@ -35,5 +35,31 @@ public class PacienteService {
         listaPacientes.add(p);
         guardar();
     }
+    // Actualizar un paciente existente (usando CURP como ID)
+    public void actualizar(Paciente pEditado) {
+        for (int i = 0; i < listaPacientes.size(); i++) {
+            if (listaPacientes.get(i).getCurp().equals(pEditado.getCurp())) {
+                listaPacientes.set(i, pEditado);
+                break;
+            }
+        }
+        guardar();
+    }
 
+    public void eliminar(Paciente p) {
+        listaPacientes.remove(p);
+        guardar();
+    }
+
+    public void cambiarEstatus(Paciente p) {
+        if (p != null) {
+            p.setActivo(!p.isActivo());
+            guardar();
+        }
+    }
+
+    public boolean existeCurp(String curp) {
+        return listaPacientes.stream().anyMatch(p -> p.getCurp().equalsIgnoreCase(curp));
+    }
 }
+
