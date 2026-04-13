@@ -1,4 +1,4 @@
-package com.example.consultorio.controllers; // CAMBIADO A CONSULTORIO
+package com.example.consultorio.controllers;
 
 import com.example.consultorio.models.Paciente;
 import javafx.collections.ObservableList;
