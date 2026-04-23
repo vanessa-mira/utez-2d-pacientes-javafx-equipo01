@@ -22,7 +22,10 @@
             </columnResizePolicy>
             <columns>
                 <TableColumn fx:id="colCurp" prefWidth="120.0" text="CURP" />
-                <TableColumn fx:id="colNombre" prefWidth="250.0" text="Nombre" />
+                <TableColumn fx:id="colNombre" prefWidth="200.0" text="Nombre Completo" />
+                <TableColumn fx:id="colEdad" prefWidth="60.0" text="Edad" />
+                <TableColumn fx:id="colTel" prefWidth="100.0" text="Teléfono" />
+                <TableColumn fx:id="colAlergias" prefWidth="150.0" text="Alergias" />
                 <TableColumn fx:id="colEstatus" prefWidth="100.0" text="Estatus" />
             </columns>
         </TableView>

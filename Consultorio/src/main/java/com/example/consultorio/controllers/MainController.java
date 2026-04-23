@@ -15,7 +15,11 @@ public class MainController {
     @FXML private TableView<Paciente> tblPacientes; // referencia a la tabla
     @FXML private TableColumn<Paciente, String> colCurp; // columna curp
     @FXML private TableColumn<Paciente, String> colNombre; // columna nombre
-    @FXML private TableColumn<Paciente, String> colEstatus; // columna estatus
+    @FXML private TableColumn<Paciente, Integer> colEdad; // columna estatus
+    @FXML private TableColumn<Paciente, String> colTel;
+    @FXML private TableColumn<Paciente, String> colAlergias;
+    @FXML private TableColumn<Paciente, String> colEstatus;
+
     @FXML private Label lblTotal, lblActivos, lblInactivos; // etiquetas de resumen
 
     private final PacienteService service = new PacienteService(); // crea el servicio de datos
@@ -25,6 +29,9 @@ public class MainController {
         // configura que columna muestra que dato del objeto paciente
         colCurp.setCellValueFactory(new PropertyValueFactory<>("curp"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colEdad.setCellValueFactory(new PropertyValueFactory<>("edad"));
+        colTel.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+        colAlergias.setCellValueFactory(new PropertyValueFactory<>("alergias"));
         colEstatus.setCellValueFactory(new PropertyValueFactory<>("estatus"));
         tblPacientes.setItems(service.getLista()); // pone los datos en la tabla
         actualizarInterfaz(); // calcula los numeros de resumen
